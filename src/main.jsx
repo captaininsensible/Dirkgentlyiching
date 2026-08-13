@@ -154,12 +154,26 @@ function CoinTossAnimation({ onComplete }) {
       {coins.map((coin, index) => (
         <motion.div
           key={index}
-          className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-amber-400 flex items-center justify-center text-2xl"
-          style={{ background: "radial-gradient(circle, #3a2e1d 40%, #1a1208 70%)" }}
-          animate={{ rotateY: flips * 360 }}
-          transition={{ duration: 0.2 }}
+          className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-4xl font-bold"
+          style={{
+            background: coin === "heads" 
+              ? "radial-gradient(circle at 30% 30%, #ffd700, #ffed4e, #b8860b)" 
+              : "radial-gradient(circle at 30% 30%, #c9a961, #daa520, #8b7500)",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(0, 0, 0, 0.3)",
+            border: "3px solid #8b7500"
+          }}
+          animate={{ 
+            rotateY: flips * 360, 
+            rotateX: flips * 180
+          }}
+          transition={{ duration: 0.15, ease: "linear" }}
         >
-          {coin === "heads" ? "☰" : "☷"}
+          <span style={{ 
+            color: coin === "heads" ? "#b8860b" : "#ffd700",
+            textShadow: "2px 2px 4px rgba(0,0,0,0.5)"
+          }}>
+            {coin === "heads" ? "☰" : "☷"}
+          </span>
         </motion.div>
       ))}
     </div>
@@ -303,7 +317,7 @@ export default function DirkGentlyIchingMachine() {
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="What shall I consult the I Ching about?"
-                  className="w-full max-w-lg mx-auto p-4 rounded-lg bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 text-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full max-w-lg mx-auto p-4 rounded-lg bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 text-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-300"
                 />
               </div>
 
@@ -395,3 +409,5 @@ export default function DirkGentlyIchingMachine() {
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(<DirkGentlyIchingMachine />);
+
+StageStage 1: Fix coin animation
