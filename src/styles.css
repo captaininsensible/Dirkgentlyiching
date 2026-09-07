@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --ink-bg: #020617;
+  --emerald-glow: #10b981;
+  --amber-glow: #d97706;
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(217, 119, 6, 0.18), transparent 32%),
+    var(--ink-bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: transparent;
+  color: #f8fafc;
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.coin-shell {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.coin-symbol {
+  text-shadow: 0 3px 10px rgba(15, 23, 42, 0.6);
+}
+
+.hex-line-bar {
+  min-height: 0.85rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(253, 224, 71, 0.95), rgba(217, 119, 6, 0.95));
+  box-shadow:
+    0 0 0 1px rgba(251, 191, 36, 0.35),
+    0 0 14px rgba(217, 119, 6, 0.28);
+}
+
+.hex-line-glow .hex-line-bar {
+  box-shadow:
+    0 0 0 1px rgba(253, 224, 71, 0.55),
+    0 0 18px rgba(217, 119, 6, 0.42),
+    0 0 32px rgba(16, 185, 129, 0.18);
+}
+
+.panel-glass {
+  box-shadow:
+    0 20px 45px rgba(2, 6, 23, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.ornament-ring {
+  filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.2));
+}
+
+.history-scroll {
+  scrollbar-color: rgba(16, 185, 129, 0.55) rgba(15, 23, 42, 0.45);
+}
