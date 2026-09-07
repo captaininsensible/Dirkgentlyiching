@@ -2,72 +2,71 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createRoot } from "react-dom/client";
 
-// I Ching Hexagram Data (64 hexagrams)
 const hexagrams = [
-  { id: 1, name: "The Creative", unicode: "☀", meaning: "Heaven. Creative power, strength, energy. The strong force that initiates all things." },
-  { id: 2, name: "The Receptive", unicode: "☾", meaning: "Earth. Receptivity, devotion, motherhood. The yielding force that receives and nurtures." },
-  { id: 3, name: "Difficulty at the Beginning", unicode: "☹", meaning: "Water over thunder. Initial confusion, but growth comes through patience and perseverance." },
-  { id: 4, name: "Youthful Folly", unicode: "☺", meaning: "Mountain under heaven. Inexperience, but also growth and learning through mistakes." },
-  { id: 5, name: "Waiting", unicode: "♄", meaning: "Heaven over water. Patience is required. Wait for the right moment to act." },
-  { id: 6, name: "Conflict", unicode: "♃", meaning: "Heaven over water. Tension and disagreement, but resolution is possible through honesty." },
-  { id: 7, name: "The Army", unicode: "♂", meaning: "Earth over water. Organization, discipline, collective effort. Leadership is needed." },
-  { id: 8, name: "Holding Together", unicode: "♁", meaning: "Water over earth. Union, solidarity, unity. Strength in numbers." },
-  { id: 9, name: "The Taming Power of the Small", unicode: "☼", meaning: "Wind over heaven. Gentle influence, subtle power. Small things can have great effect." },
-  { id: 10, name: "Treading", unicode: "♌", meaning: "Heaven over lake. Caution, careful conduct. Walk the path with awareness." },
-  { id: 11, name: "Peace", unicode: "♍", meaning: "Earth over heaven. Harmony, prosperity, the natural order of things." },
-  { id: 12, name: "Standstill", unicode: "♎", meaning: "Heaven over earth. Stagnation, but also a time for inner reflection and preparation." },
-  { id: 13, name: "Fellowship", unicode: "♏", meaning: "Heaven over fire. Community, shared purpose, celebration. Together we are stronger." },
-  { id: 14, name: "Possession in Great Measure", unicode: "♐", meaning: "Fire over heaven. Great wealth, abundance, generosity. Share your blessings." },
-  { id: 15, name: "Modesty", unicode: "♑", meaning: "Earth over mountain. Humility, simplicity. The quiet power of the unassuming." },
-  { id: 16, name: "Enthusiasm", unicode: "♒", meaning: "Thunder over earth. Joy, inspiration, collective energy. Let your passion guide you." },
-  { id: 17, name: "Following", unicode: "♓", meaning: "Lake over thunder. Adaptability, going with the flow. Leadership through example." },
-  { id: 18, name: "Work on What Has Been Spoiled", unicode: "☽", meaning: "Mountain over wind. Repair, renewal, correcting past mistakes. Healing is possible." },
-  { id: 19, name: "Approach", unicode: "☾", meaning: "Earth over lake. Gradual progress, things coming together. Patience brings reward." },
-  { id: 20, name: "Contemplation", unicode: "☽", meaning: "Wind over earth. Observation, reflection, viewing from above. Gain perspective before acting." },
-  { id: 21, name: "Biting Through", unicode: "♈", meaning: "Fire over thunder. Justice, clarity, cutting through confusion. Truth will prevail." },
-  { id: 22, name: "Grace", unicode: "♉", meaning: "Mountain over fire. Elegance, refinement, beauty. Form and function in harmony." },
-  { id: 23, name: "Splitting Apart", unicode: "♊", meaning: "Mountain over earth. Disintegration, but also the opportunity for renewal. Let go of what no longer serves." },
-  { id: 24, name: "Return", unicode: "♋", meaning: "Earth over thunder. Coming back, renewal, the turning point. A new cycle begins." },
-  { id: 25, name: "Innocence", unicode: "♌", meaning: "Heaven over thunder. Spontaneity, naturalness, the wisdom of the child. Trust your instincts." },
-  { id: 26, name: "The Taming Power of the Great", unicode: "♍", meaning: "Mountain over heaven. Cultivation, nurturing great potential. Great things require great care." },
-  { id: 27, name: "The Corners of the Mouth", unicode: "♎", meaning: "Mountain over thunder. Words, nourishment, the power of speech. Choose your words wisely." },
-  { id: 28, name: "Preponderance of the Great", unicode: "♏", meaning: "Lake over wind. Burden, responsibility, but also strength. Carry your load with dignity." },
-  { id: 29, name: "The Abysmal", unicode: "♐", meaning: "Water repeated. Danger, the unknown, but also depth and mystery. Face your fears." },
-  { id: 30, name: "The Clinging", unicode: "♑", meaning: "Fire repeated. Light, clarity, dependence. Stay true to your inner light." },
-  { id: 31, name: "Influence", unicode: "♒", meaning: "Lake over mountain. Attraction, courtship, the power of mutual feeling. Let yourself be moved." },
-  { id: 32, name: "Duration", unicode: "♓", meaning: "Thunder over wind. Continuity, endurance, lasting power. What endures has value." },
-  { id: 33, name: "Retreat", unicode: "♈", meaning: "Mountain over heaven. Withdrawal, strategy, knowing when to step back. Sometimes retreat is the wisest action." },
-  { id: 34, name: "The Power of the Great", unicode: "♉", meaning: "Thunder over heaven. Strength, vitality, the power of life itself. Harness your energy." },
-  { id: 35, name: "Progress", unicode: "♊", meaning: "Fire over earth. Advancement, movement forward. The time is right for action." },
-  { id: 36, name: "Darkening of the Light", unicode: "♋", meaning: "Earth over fire. Difficulty, setbacks, but also the wisdom of experience. Light will return." },
-  { id: 37, name: "The Family", unicode: "♌", meaning: "Wind over fire. Home, relationships, the foundation of society. Nurture your connections." },
-  { id: 38, name: "Opposition", unicode: "♍", meaning: "Fire over lake. Conflict, difference of opinion. Seek common ground." },
-  { id: 39, name: "Obstruction", unicode: "♎", meaning: "Water over mountain. Delays, obstacles, but also the opportunity for inner growth. Patience is a virtue." },
-  { id: 40, name: "Deliverance", unicode: "♏", meaning: "Thunder over water. Liberation, breaking free, a thunderstorm clears the air. Freedom is coming." },
-  { id: 41, name: "Decrease", unicode: "♐", meaning: "Mountain over lake. Letting go, simplification, reducing to the essential. Less can be more." },
-  { id: 42, name: "Increase", unicode: "♑", meaning: "Wind over thunder. Growth, expansion, abundance. Good fortune is increasing." },
-  { id: 43, name: "Breakthrough", unicode: "♒", meaning: "Lake over heaven. Resolution, decisive action, water breaking through the dam. The time for action is now." },
-  { id: 44, name: "Coming to Meet", unicode: "♓", meaning: "Wind over heaven. Encounter, opportunity, meeting someone significant. Be open to new connections." },
-  { id: 45, name: "Gathering Together", unicode: "♈", meaning: "Water over lake. Unity, community, coming together for a common purpose. Together we achieve more." },
-  { id: 46, name: "Pushing Upward", unicode: "♉", meaning: "Earth over wind. Gradual progress, steady growth. Keep moving forward." },
-  { id: 47, name: "Oppression", unicode: "♊", meaning: "Lake over water. Constraint, difficulty, but also the pressure that creates diamonds. Persevere." },
-  { id: 48, name: "The Well", unicode: "♋", meaning: "Water over wind. Nourishment, community resources, the source of life. Draw from the well of wisdom." },
-  { id: 49, name: "Revolution", unicode: "♌", meaning: "Fire over lake. Change, upheaval, the old giving way to the new. Embrace transformation." },
-  { id: 50, name: "The Cauldron", unicode: "♍", meaning: "Wind over fire. Culture, civilization, the vessel that holds society together. Nurture what sustains you." },
-  { id: 51, name: "The Arousing", unicode: "♎", meaning: "Thunder repeated. Shock, awakening, sudden realization. A thunderclap of truth." },
-  { id: 52, name: "The Keeping Still", unicode: "♏", meaning: "Mountain repeated. Stillness, meditation, going within. The mountain stands unmoving." },
-  { id: 53, name: "Development", unicode: "♐", meaning: "Wind over mountain. Gradual growth, evolution, the slow unfolding of potential. Nature takes its course." },
-  { id: 54, name: "The Marrying Maiden", unicode: "♑", meaning: "Thunder over lake. New beginnings, marriage, partnerships. A time for union." },
-  { id: 55, name: "Abundance", unicode: "♒", meaning: "Fire over thunder. Prosperity, richness, the fullness of life. Rejoice in your good fortune." },
-  { id: 56, name: "The Wanderer", unicode: "♓", meaning: "Fire over mountain. Journey, exploration, seeking new horizons. The traveler finds wisdom." },
-  { id: 57, name: "The Gentle", unicode: "♈", meaning: "Wind over wind. Penetration, subtlety, the power of the gentle. Water wears away the stone." },
-  { id: 58, name: "The Joyous", unicode: "♉", meaning: "Lake over lake. Joy, celebration, the pleasure of being alive. Share your happiness." },
-  { id: 59, name: "Dispersion", unicode: "♊", meaning: "Wind over water. Scattering, release, letting go. The wind disperses the clouds." },
-  { id: 60, name: "Articulating", unicode: "♋", meaning: "Water over lake. Moderation, temperance, the middle way. Balance brings harmony." },
-  { id: 61, name: "Inner Truth", unicode: "♌", meaning: "Wind over lake. Sincerity, integrity, the heart's truth. Be true to yourself." },
-  { id: 62, name: "Preponderance of the Small", unicode: "♍", meaning: "Thunder over mountain. Small things, details, the power of the minute. Pay attention to the little things." },
-  { id: 63, name: "After Completion", unicode: "♎", meaning: "Water over fire. Completion, but also the seeds of the next beginning. All things pass." },
-  { id: 64, name: "Before Completion", unicode: "♏", meaning: "Fire over water. The point before completion, the moment of greatest tension. Stay alert." }
+  { id: 1, name: "The Creative", unicode: "☀", meaning: "Heaven. Creative power." },
+  { id: 2, name: "The Receptive", unicode: "☾", meaning: "Earth. Receptivity." },
+  { id: 3, name: "Difficulty at the Beginning", unicode: "☹", meaning: "Water over thunder." },
+  { id: 4, name: "Youthful Folly", unicode: "☺", meaning: "Mountain under heaven." },
+  { id: 5, name: "Waiting", unicode: "♄", meaning: "Heaven over water." },
+  { id: 6, name: "Conflict", unicode: "♃", meaning: "Tension and disagreement." },
+  { id: 7, name: "The Army", unicode: "♂", meaning: "Organization and discipline." },
+  { id: 8, name: "Holding Together", unicode: "♁", meaning: "Union and solidarity." },
+  { id: 9, name: "The Taming Power of the Small", unicode: "☼", meaning: "Wind over heaven." },
+  { id: 10, name: "Treading", unicode: "♌", meaning: "Heaven over lake." },
+  { id: 11, name: "Peace", unicode: "♍", meaning: "Harmony and prosperity." },
+  { id: 12, name: "Standstill", unicode: "♎", meaning: "Stagnation and reflection." },
+  { id: 13, name: "Fellowship", unicode: "♏", meaning: "Community and celebration." },
+  { id: 14, name: "Possession in Great Measure", unicode: "♐", meaning: "Fire over heaven." },
+  { id: 15, name: "Modesty", unicode: "♑", meaning: "Humility and simplicity." },
+  { id: 16, name: "Enthusiasm", unicode: "♒", meaning: "Thunder over earth." },
+  { id: 17, name: "Following", unicode: "♓", meaning: "Lake over thunder." },
+  { id: 18, name: "Work on What Has Been Spoiled", unicode: "☽", meaning: "Mountain over wind." },
+  { id: 19, name: "Approach", unicode: "☾", meaning: "Earth over lake." },
+  { id: 20, name: "Contemplation", unicode: "☽", meaning: "Wind over earth." },
+  { id: 21, name: "Biting Through", unicode: "♈", meaning: "Fire over thunder." },
+  { id: 22, name: "Grace", unicode: "♉", meaning: "Mountain over fire." },
+  { id: 23, name: "Splitting Apart", unicode: "♊", meaning: "Mountain over earth." },
+  { id: 24, name: "Return", unicode: "♋", meaning: "Earth over thunder." },
+  { id: 25, name: "Innocence", unicode: "♌", meaning: "Heaven over thunder." },
+  { id: 26, name: "The Taming Power of the Great", unicode: "♍", meaning: "Mountain over heaven." },
+  { id: 27, name: "The Corners of the Mouth", unicode: "♎", meaning: "Mountain over thunder." },
+  { id: 28, name: "Preponderance of the Great", unicode: "♏", meaning: "Lake over wind." },
+  { id: 29, name: "The Abysmal", unicode: "♐", meaning: "Water repeated." },
+  { id: 30, name: "The Clinging", unicode: "♑", meaning: "Fire repeated." },
+  { id: 31, name: "Influence", unicode: "♒", meaning: "Lake over mountain." },
+  { id: 32, name: "Duration", unicode: "♓", meaning: "Thunder over wind." },
+  { id: 33, name: "Retreat", unicode: "♈", meaning: "Mountain over heaven." },
+  { id: 34, name: "The Power of the Great", unicode: "♉", meaning: "Thunder over heaven." },
+  { id: 35, name: "Progress", unicode: "♊", meaning: "Fire over earth." },
+  { id: 36, name: "Darkening of the Light", unicode: "♋", meaning: "Earth over fire." },
+  { id: 37, name: "The Family", unicode: "♌", meaning: "Wind over fire." },
+  { id: 38, name: "Opposition", unicode: "♍", meaning: "Fire over lake." },
+  { id: 39, name: "Obstruction", unicode: "♎", meaning: "Water over mountain." },
+  { id: 40, name: "Deliverance", unicode: "♏", meaning: "Thunder over water." },
+  { id: 41, name: "Decrease", unicode: "♐", meaning: "Mountain over lake." },
+  { id: 42, name: "Increase", unicode: "♑", meaning: "Wind over thunder." },
+  { id: 43, name: "Breakthrough", unicode: "♒", meaning: "Lake over heaven." },
+  { id: 44, name: "Coming to Meet", unicode: "♓", meaning: "Wind over heaven." },
+  { id: 45, name: "Gathering Together", unicode: "♈", meaning: "Water over lake." },
+  { id: 46, name: "Pushing Upward", unicode: "♉", meaning: "Earth over wind." },
+  { id: 47, name: "Oppression", unicode: "♊", meaning: "Lake over water." },
+  { id: 48, name: "The Well", unicode: "♋", meaning: "Water over wind." },
+  { id: 49, name: "Revolution", unicode: "♌", meaning: "Fire over lake." },
+  { id: 50, name: "The Cauldron", unicode: "♍", meaning: "Wind over fire." },
+  { id: 51, name: "The Arousing", unicode: "♎", meaning: "Thunder repeated." },
+  { id: 52, name: "The Keeping Still", unicode: "♏", meaning: "Mountain repeated." },
+  { id: 53, name: "Development", unicode: "♐", meaning: "Wind over mountain." },
+  { id: 54, name: "The Marrying Maiden", unicode: "♑", meaning: "Thunder over lake." },
+  { id: 55, name: "Abundance", unicode: "♒", meaning: "Fire over thunder." },
+  { id: 56, name: "The Wanderer", unicode: "♓", meaning: "Fire over mountain." },
+  { id: 57, name: "The Gentle", unicode: "♈", meaning: "Wind over wind." },
+  { id: 58, name: "The Joyous", unicode: "♉", meaning: "Lake over lake." },
+  { id: 59, name: "Dispersion", unicode: "♊", meaning: "Wind over water." },
+  { id: 60, name: "Articulating", unicode: "♋", meaning: "Water over lake." },
+  { id: 61, name: "Inner Truth", unicode: "♌", meaning: "Wind over lake." },
+  { id: 62, name: "Preponderance of the Small", unicode: "♍", meaning: "Thunder over mountain." },
+  { id: 63, name: "After Completion", unicode: "♎", meaning: "Water over fire." },
+  { id: 64, name: "Before Completion", unicode: "♏", meaning: "Fire over water." }
 ];
 
 const LINE_TYPES = {
@@ -76,30 +75,6 @@ const LINE_TYPES = {
   8: { symbol: "-- --", name: "Young Yin", value: 0, changingTo: null },
   9: { symbol: "--- o ---", name: "Old Yang", value: 1, changingTo: 8 }
 };
-
-function generateHexagram() {
-  const lines = [];
-  const changingLines = [];
-  for (let i = 0; i < 6; i++) {
-    const coin1 = Math.random() < 0.5 ? 2 : 3;
-    const coin2 = Math.random() < 0.5 ? 2 : 3;
-    const coin3 = Math.random() < 0.5 ? 2 : 3;
-    const sum = coin1 + coin2 + coin3;
-    lines.push(sum);
-    if (sum === 6 || sum === 9) changingLines.push(i);
-  }
-  return { lines, changingLines };
-}
-
-function getChangingHexagram(lines, changingLines) {
-  if (changingLines.length === 0) return null;
-  const newLines = [...lines];
-  for (const index of changingLines) {
-    const line = lines[index];
-    newLines[index] = line === 6 ? 7 : 8;
-  }
-  return { lines: newLines };
-}
 
 function LineDisplay({ lineValue, index, isChanging }) {
   const line = LINE_TYPES[lineValue];
@@ -111,7 +86,7 @@ function LineDisplay({ lineValue, index, isChanging }) {
       transition={{ delay: index * 0.15 }}
     >
       {line.symbol}
-      {isChanging && <span className="ml-2 text-sm">→ {LINE_TYPES[line.changingTo].symbol}</span>}
+      {isChanging && <span className="ml-2 text-sm">{" → "}{LINE_TYPES[line.changingTo].symbol}</span>}
     </motion.div>
   );
 }
@@ -156,19 +131,19 @@ function CoinTossAnimation({ onComplete }) {
           key={index}
           className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-4xl font-bold"
           style={{
-            background: coin === "heads"
-              ? "radial-gradient(circle at 30% 30%, #ffd700, #ffed4e, #b8860b)"
+            background: coin === "heads" 
+              ? "radial-gradient(circle at 30% 30%, #ffd700, #ffed4e, #b8860b)" 
               : "radial-gradient(circle at 30% 30%, #c9a961, #daa520, #8b7500)",
             boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(0, 0, 0, 0.3)",
             border: "3px solid #8b7500"
           }}
-          animate={{
-            rotateY: flips * 360,
+          animate={{ 
+            rotateY: flips * 360, 
             rotateX: flips * 180
           }}
           transition={{ duration: 0.15, ease: "linear" }}
         >
-          <span style={{
+          <span style={{ 
             color: coin === "heads" ? "#b8860b" : "#ffd700",
             textShadow: "2px 2px 4px rgba(0,0,0,0.5)"
           }}>
@@ -255,14 +230,20 @@ export default function DirkGentlyIchingMachine() {
     }, 0);
     const hexId = hexValue + 1;
 
-    const changingHexData = getChangingHexagram(results, results.filter(r => r === 6 || r === 9).map((_, i) => results.indexOf(_)));
+    const changingIndices = results
+      .map((r, i) => (r === 6 || r === 9 ? i : -1))
+      .filter(i => i !== -1);
 
     setLines(results);
-    setChangingLines(results.map((r, i) => r === 6 || r === 9 ? i : -1).filter(i => i !== -1));
+    setChangingLines(changingIndices);
     setHexagram({ id: hexId });
 
-    if (changingHexData) {
-      const changingValue = changingHexData.lines.reduce((acc, val) => {
+    if (changingIndices.length > 0) {
+      const newLines = [...results];
+      for (const idx of changingIndices) {
+        newLines[idx] = results[idx] === 6 ? 7 : 8;
+      }
+      const changingValue = newLines.reduce((acc, val) => {
         const lineValue = LINE_TYPES[val].value;
         return (acc << 1) | lineValue;
       }, 0);
@@ -284,10 +265,9 @@ export default function DirkGentlyIchingMachine() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-slate-900 to-amber-950 text-white p-4 md:p-8 relative overflow-hidden">
-      {/* Bamboo decorative elements */}
       <div className="absolute top-0 left-0 opacity-10 text-8xl pointer-events-none">🎋</div>
       <div className="absolute bottom-0 right-0 opacity-10 text-8xl pointer-events-none">🎋</div>
-     
+      
       <div className="max-w-4xl mx-auto relative z-10">
         <motion.div
           className="text-center mb-8 md:mb-12"
@@ -300,8 +280,7 @@ export default function DirkGentlyIchingMachine() {
             Dirk Gently's Portable I Ching Machine
           </h1>
           <p className="text-emerald-100 text-lg max-w-2xl mx-auto italic">
-            Think of a question, consult the ancient wisdom of the I Ching through the tossing of coins,
-            and receive guidance as Dirk Gently might have done.
+            Think of a question and consult the ancient wisdom of the I Ching.
           </p>
         </motion.div>
 
@@ -364,12 +343,48 @@ export default function DirkGentlyIchingMachine() {
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y}}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <HexagramDisplay
+                hexagram={hexagram}
+                changingHexagram={changingHexagram}
+                lines={lines}
+                changingLines={changingLines}
+              />
+
+              <motion.div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                <motion.button
+                  onClick={handleReset}
+                  className="px-6 py-3 bg-emerald-700/50 hover:bg-emerald-600/50 text-white font-semibold rounded-lg transition-colors duration-300 border border-emerald-500/50"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  新的問卜 • New Consultation
+                </motion.button>
+
+                <motion.button
+                  onClick={handleConsult}
+                  className="px-6 py-3 bg-gradient-to-r from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-white font-semibold rounded-lg transition-all duration-300 border border-amber-400/50"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  再問卜 • Consult Again
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <motion.div
+          className="text-center mt-12 md:mt-16 text-emerald-200/60 text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
           <p>
             Inspired by Douglas Adams' Dirk Gently's Holistic Detective Agency.
-            The I Ching (Book of Changes) is an ancient Chinese divination text.
+            The I Ching is an ancient Chinese divination text.
           </p>
           <p className="mt-2 text-amber-300/60">🎋 易經 • 易經 🎋</p>
         </motion.div>
