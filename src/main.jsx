@@ -364,4 +364,20 @@ export default function DirkGentlyIchingMachine() {
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y
+              exit={{ opacity: 0, y}}
+          transition={{ delay: 0.5 }}
+        >
+          <p>
+            Inspired by Douglas Adams' Dirk Gently's Holistic Detective Agency.
+            The I Ching (Book of Changes) is an ancient Chinese divination text.
+          </p>
+          <p className="mt-2 text-amber-300/60">🎋 易經 • 易經 🎋</p>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(<DirkGentlyIchingMachine />);
