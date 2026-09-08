@@ -44,6 +44,11 @@ function readHistory() {
 
 function writeHistory(history) {
   if (typeof window !== "undefined") {
+    if (history.length === 0) {
+      window.localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
   }
 }
@@ -400,7 +405,15 @@ function InsightBlock({ title, children, accent = "amber" }) {
   );
 }
 
-function HistoryPanel({ history, onSelect, onExport }) {
+function HistoryPanel({
+  history,
+  onSelect,
+  onExport,
+  showClearAllConfirm,
+  onShowClearAllConfirm,
+  onCancelClearAllHistory,
+  onClearAllHistory,
+}) {
   return (
     <aside className="rounded-3xl border border-emerald-400/20 bg-slate-950/70 p-5 panel-glass">
       <div className="flex items-center justify-between gap-4">
@@ -416,6 +429,67 @@ function HistoryPanel({ history, onSelect, onExport }) {
           Export JSON
         </button>
       </div>
+
+      <AnimatePresence initial={false}>
+        {history.length > 0 && (
+          <motion.div
+            className="mt-4 overflow-hidden"
+            initial={{ opacity: 0, height: 0, y: -6 }}
+            animate={{ opacity: 1, height: "auto", y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -6 }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {showClearAllConfirm ? (
+                <motion.div
+                  key="confirm-clear-history"
+                  className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                >
+                  <p className="text-sm font-semibold text-red-100">
+                    Are you sure? This cannot be undone.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    <motion.button
+                      type="button"
+                      onClick={onClearAllHistory}
+                      className="rounded-full border border-red-300/40 bg-red-500/20 px-4 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-500/30"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Delete All
+                    </motion.button>
+                    <motion.button
+                      type="button"
+                      onClick={onCancelClearAllHistory}
+                      className="rounded-full border border-slate-600 bg-slate-900/70 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Cancel
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.button
+                  key="show-clear-history"
+                  type="button"
+                  onClick={onShowClearAllConfirm}
+                  className="rounded-full border border-red-300/35 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-500/20"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  Clear All History
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="history-scroll mt-5 max-h-[28rem] space-y-3 overflow-auto pr-1">
         {history.length === 0 ? (
@@ -463,6 +537,7 @@ export default function DirkGentlyIchingMachine() {
   const [question, setQuestion] = useState("");
   const [reading, setReading] = useState(null);
   const [history, setHistory] = useState(() => readHistory());
+  const [showClearAllConfirm, setShowClearAllConfirm] = useState(false);
 
   const interpretation = useMemo(
     () =>
@@ -502,6 +577,19 @@ export default function DirkGentlyIchingMachine() {
     setQuestion(savedReading.question);
     setReading(savedReading);
     setState("result");
+  };
+
+  const handleShowClearAllHistoryConfirm = () => {
+    setShowClearAllConfirm(true);
+  };
+
+  const handleCancelClearAllHistory = () => {
+    setShowClearAllConfirm(false);
+  };
+
+  const handleClearAllHistory = () => {
+    setHistory([]);
+    setShowClearAllConfirm(false);
   };
 
   const handleExportHistory = () => {
@@ -718,7 +806,15 @@ export default function DirkGentlyIchingMachine() {
             </AnimatePresence>
           </main>
 
-          <HistoryPanel history={history} onSelect={handleSelectReading} onExport={handleExportHistory} />
+          <HistoryPanel
+            history={history}
+            onSelect={handleSelectReading}
+            onExport={handleExportHistory}
+            showClearAllConfirm={showClearAllConfirm}
+            onShowClearAllConfirm={handleShowClearAllHistoryConfirm}
+            onCancelClearAllHistory={handleCancelClearAllHistory}
+            onClearAllHistory={handleClearAllHistory}
+          />
         </div>
       </div>
     </div>
